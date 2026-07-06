@@ -507,36 +507,46 @@
         }
 
         .biz-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: left;
-            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
-            transform-style: preserve-3d;
-        }
+			position: relative;
+			width: 100%;
+			height: 100%;
+			text-align: left;
+			transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+			transform-style: preserve-3d;
+			-webkit-transform-style: preserve-3d; /* 사파리 호환성 추가 */
+		}
+		
+		/* 클릭 시 180도 회전 클래스 */
+		.business-card.is-flipped .biz-card-inner {
+			transform: rotateY(180deg);
+			-webkit-transform: rotateY(180deg);
+		}
+		
+		.biz-card-front, .biz-card-back {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			backface-visibility: hidden;
+			-webkit-backface-visibility: hidden; /* 🍎 아이패드/사파리 버그 해결의 핵심 */
+			background: white;
+			border-top: 5px solid var(--nova-blue);
+			border-bottom: 5px solid var(--nova-blue);
+			box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+			border-radius: 4px;
+			overflow: hidden; 
+		}
 
-        /* 클릭 시 180도 회전 클래스 */
-        .business-card.is-flipped .biz-card-inner {
-            transform: rotateY(180deg);
-        }
+		/* 앞면 위치 고정 (z축으로 1px 띄워서 뒷면과 확실히 분리) */
+		.biz-card-front {
+			transform: rotateY(0deg) translateZ(1px);
+			-webkit-transform: rotateY(0deg) translateZ(1px);
+		}
 
-        .biz-card-front, .biz-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            background: white;
-            border-top: 5px solid var(--nova-blue);
-            border-bottom: 5px solid var(--nova-blue);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border-radius: 4px;
-            overflow: hidden; 
-        }
-
-        /* 뒷면은 기본적으로 180도 뒤집힌 상태로 대기 */
-        .biz-card-back {
-            transform: rotateY(180deg);
-        }
+		/* 뒷면은 기본적으로 180도 뒤집힌 상태로 대기 */
+		.biz-card-back {
+			transform: rotateY(180deg) translateZ(1px);
+			-webkit-transform: rotateY(180deg) translateZ(1px);
+		}
 
         /* 명함 내부 요소 위치 조정 (공통) */
         .business-card .logo-area { 
