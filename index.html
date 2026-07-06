@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA | 범평행세계 위기관리 솔루션</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap" rel="stylesheet">
+
+    <style>
+		/* 코드 최상단의 전체 선택자 구역 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', sans-serif;
+            /* ▼ 사이트 전체의 줄글이 어절 단위로만 떨어지게 만드는 핵심 코드 ▼ */
+            word-break: keep-all; 
+        }
+        :root {
+            --nova-blue: #0055FF;
+            --text-dark: #222222;
+            --text-light: #FFFFFF;
+            --bg-main: #F8F9FA;
+            --placeholder-bg: #Eef2fa;
+            --placeholder-border: #b3caff;
+            --border-gray: #E5E7EB;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* ---------------- SVG 아이콘 보관소 ---------------- */
+        .svg-defs { display: none; }
+
+        /* ---------------- 헤더 및 네비게이션 ---------------- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            padding: 0 40px 0 30px; 
+            z-index: 1000;
+            border-bottom: 1px solid #EAEAEA;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center;
+            gap: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: auto; 
+            transform: none; 
+        }
+
+        .logo-image {
+            height: 24px;
+            width: 49px; 
+            color: var(--text-dark);
+        }
+
+        .logo-text {
+            height: 18px;
+            width: 72px; 
+            color: var(--text-dark);
+        }
+
+        /* PC 메뉴 */
+        .desktop-nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .desktop-nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 16px;
+            transition: color 0.2s ease;
+            cursor: pointer; 
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .desktop-nav a:hover,
+        .desktop-nav a.active-link {
+            color: var(--nova-blue);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            width: 25px;
+            height: 20px;
+            position: relative;
+            z-index: 1001;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: var(--text-dark);
+            border-radius: 2px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .hamburger span:nth-child(1) { top: 0px; }
+        .hamburger span:nth-child(2) { top: 9px; }
+        .hamburger span:nth-child(3) { top: 18px; }
+
+        .hamburger.active span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
+
+        /* 모바일 사이드 메뉴 */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+            padding-top: 100px;
+            padding-left: 40px;
+            transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .mobile-nav.active { right: 0; }
+
+        .mobile-nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: 20px;
+            font-weight: 700;
+            -webkit-tap-highlight-color: transparent;
+            cursor: pointer; 
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .mobile-nav a.active-link {
+            color: var(--nova-blue);
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* ---------------- 공통 메인/섹션 레이아웃 ---------------- */
+        main {
+            padding-top: 80px; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .hero-section {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .fade-item {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .fade-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hero-title {
+            font-size: 42px;
+            font-weight: 900;
+            line-height: 1.3;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        .section-title span { color: var(--nova-blue); }
+
+        .section-desc {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #444;
+            text-align: justify;
+            word-break: keep-all;
+        }
+
+        .feature-list {
+            margin-top: 30px;
+            text-align: left;
+            list-style: none;
+        }
+
+        .feature-list li {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 15px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .feature-list li::before {
+            content: '■';
+            color: var(--nova-blue);
+            position: absolute;
+            left: 0;
+            font-size: 12px;
+            top: 2px;
+        }
+
+        .content-image-placeholder {
+            width: 100%;
+            height: 280px;
+            background-color: var(--placeholder-bg);
+            border: 2px dashed var(--placeholder-border);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--nova-blue);
+            font-size: 15px;
+            font-weight: 700;
+            margin: 40px 0; 
+            box-shadow: 0 4px 10px rgba(0, 85, 255, 0.05);
+        }
+		
+        .content-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 40px 0; 
+            box-shadow: 0 4px 10px rgba(0, 85, 255, 0.05);
+            display: block;
+        }
+
+        /* ---------------- 조직도 및 부서 디자인 ---------------- */
+        .org-structure-container {
+            width: 100%;
+            margin: 40px 0 60px 0;
+        }
+
+        .org-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 50px;
+        }
+
+        .org-root-node {
+            background-color: var(--nova-blue);
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+            padding: 15px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 85, 255, 0.2);
+            position: relative;
+        }
+
+        .org-root-node::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background-color: var(--border-gray);
+        }
+
+        .org-branches {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            border-top: 2px solid var(--border-gray);
+            padding-top: 20px;
+            gap: 40px;
+        }
+
+        .org-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .org-office-node {
+            background-color: white;
+            border: 2px solid var(--nova-blue);
+            color: var(--text-dark);
+            font-size: 16px;
+            font-weight: 800;
+            padding: 12px 25px;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            text-align: center;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .org-teams-list {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 260px;
+        }
+
+        .org-team-node {
+            background-color: #ECEFF4;
+            color: #4C566A;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            border-left: 3px solid #D8DEE9;
+        }
+
+        .dept-info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .dept-info-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border-left: 5px solid var(--nova-blue);
+        }
+
+        .dept-info-card.support-dept {
+            border-left-color: #64748B;
+        }
+
+        .dept-info-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dept-info-title span {
+            font-size: 13px;
+            font-weight: 600;
+            background: #Eef2fa;
+            color: var(--nova-blue);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .dept-info-card.support-dept .dept-info-title span {
+            background: #F1F5F9;
+            color: #475569;
+        }
+
+        .dept-info-desc {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* ---------------- 구성원 카드 레이아웃 및 템플릿 ---------------- */
+        .member-section-divider {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--nova-blue);
+            margin: 60px 0 25px 0;
+            text-align: left;
+            border-bottom: 2px solid var(--nova-blue);
+            padding-bottom: 8px;
+            width: 100%;
+        }
+
+        .member-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border-gray);
+            width: 100%;
+        }
+        .member-container:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .photo-crop {
+            aspect-ratio: 35 / 45;
+            object-fit: cover;
+            background-color: #E5E7EB;
+            border-radius: 4px;
+        }
+
+        /* 사원증 */
+        .id-card {
+            width: 240px;
+            height: 388px;
+            background: white;
+            border-top: 6px solid var(--nova-blue);
+            border-bottom: 6px solid var(--nova-blue);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            text-align: center;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-user-drag: none;
+        }
+        .id-card .logo-area { 
+            width: 56px; 
+            height: 28px; 
+            margin-bottom: 18px; 
+            display: block;
+        }
+        .id-card .photo { width: 105px; height: auto; margin-bottom: 15px; }
+        .id-card .name { font-size: 19px; font-weight: 800; color: var(--text-dark); margin-bottom: 3px; }
+        .id-card .department { font-size: 12px; color: #666; margin-bottom: 10px; }
+        
+        /* 변경된 바코드 영역 스타일 */
+        .id-card .barcode-area {
+            width: 100%; 
+            height: 45px;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            font-family: 'Libre Barcode 39', cursive;
+            font-size: 46px; 
+            color: #222; 
+            background: transparent;
+            margin-top: 5px;
+        }
+
+        /* 명함 (3D 플립 적용) */
+        .business-card {
+            width: 420px;
+            height: 233px;
+            perspective: 1000px; /* 3D 효과를 위한 원근감 */
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .biz-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: left;
+            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        /* 클릭 시 180도 회전 클래스 */
+        .business-card.is-flipped .biz-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .biz-card-front, .biz-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: white;
+            border-top: 5px solid var(--nova-blue);
+            border-bottom: 5px solid var(--nova-blue);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-radius: 4px;
+            overflow: hidden; 
+        }
+
+        /* 뒷면은 기본적으로 180도 뒤집힌 상태로 대기 */
+        .biz-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* 명함 내부 요소 위치 조정 (공통) */
+        .business-card .logo-area { 
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            width: 135px; 
+            height: 34px; 
+            display: block;
+        } 
+
+        .business-card .photo-biz {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            width: 95px;
+            height: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        
+        .business-card .info-section { 
+            position: absolute;
+            left: 25px;
+            bottom: 16px; 
+            z-index: 1; 
+        }
+        
+        .business-card .info-section h2 { font-size: 22px; font-weight: 800; color: var(--text-dark); margin-bottom: 2px; }
+        .business-card .info-section .title { font-size: 13px; color: var(--nova-blue); font-weight: 600; margin-bottom: 10px; }
+        .business-card .info-section .contact { font-size: 11px; color: #666; line-height: 1.5; }
+
+        .business-card .bg-watermark {
+            position: absolute;
+            right: 25px;
+            bottom: 16px; 
+            width: 65px;
+            height: 32px;
+            color: var(--nova-blue);
+            opacity: 0.15;
+            z-index: 0;
+        }
+		
+		/* ---------------- 명함 뒷면 색반전(다크 모드) 스타일 ---------------- */
+        .biz-card-back.inverted-back {
+            background-color: #111111; /* 어두운 배경 */
+            color: #FFFFFF;
+        }
+        .biz-card-back.inverted-back .info-section h2 {
+            color: #FFFFFF;
+        }
+        .biz-card-back.inverted-back .info-section .title {
+            color: var(--nova-blue); /* 직책은 파란색 유지 */
+        }
+        .biz-card-back.inverted-back .info-section .contact {
+            color: #A0AEC0; /* 연락처는 밝은 회색 */
+        }
+        .biz-card-back.inverted-back .logo-area {
+            color: #FFFFFF !important; /* 로고를 흰색으로 반전 */
+        }
+        .biz-card-back.inverted-back .bg-watermark {
+            opacity: 0.15;
+            color: #FFFFFF;
+        }
+
+        /* ---------------- Careers (인재 채용) 레이아웃 ---------------- */
+        .careers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--border-gray);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 85, 255, 0.1);
+            border-top-color: var(--nova-blue);
+        }
+        
+        .job-card.field-team:hover {
+            box-shadow: 0 8px 25px rgba(229, 62, 62, 0.15);
+            border-top-color: #E53E3E;
+        }
+        
+        .job-dept {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--nova-blue);
+            margin-bottom: 10px;
+            background: var(--placeholder-bg);
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            width: fit-content;
+        }
+        
+        .job-card.field-team .job-dept {
+            color: #E53E3E;
+            background: #FED7D7;
+        }
+        
+        .job-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+        
+        .job-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #4A5568;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-gray);
+            padding-bottom: 5px;
+        }
+        
+        .job-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .job-list li {
+            font-size: 13px;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 6px;
+            padding-left: 12px;
+            position: relative;
+        }
+        
+        .job-list li::before {
+            content: '-';
+            position: absolute;
+            left: 0;
+            color: #A0AEC0;
+        }
+        
+        .job-list li strong {
+            color: var(--text-dark);
+        }
+        
+        .job-card.field-team .job-list li strong {
+            color: #E53E3E;
+        }
+
+        /* ---------------- 전용 하단 푸터 (Footer) ---------------- */
+        footer {
+            background-color: #1A202C;
+            color: #A0AEC0;
+            padding: 50px 40px;
+            font-size: 13px;
+            line-height: 1.7;
+            margin-top: auto; 
+            border-top: 1px solid #2D3748;
+            width: 100%;
+        }
+
+        .footer-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2D3748;
+            padding-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .footer-links a {
+            color: #CBD5E0;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--nova-blue);
+        }
+
+        .footer-links .privacy-policy {
+            color: #FFFFFF;
+            position: relative;
+        }
+
+        .footer-logo {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            color: #E2E8F0;
+            opacity: 0.4;
+            align-items: center;
+        }
+
+        .footer-logo .logo-image { height: 16px; width: 33px; }
+        .footer-logo .logo-text { height: 12px; width: 48px; }
+
+        .footer-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .footer-info-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0 15px;
+        }
+
+        .footer-info-row span {
+            position: relative;
+        }
+
+        .footer-info-row span:not(:last-child)::after {
+            content: '';
+            display: inline-block;
+            width: 1px;
+            height: 10px;
+            background-color: #4A5568;
+            margin-left: 15px;
+            vertical-align: middle;
+        }
+
+        .copyright {
+            color: #718096;
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        /* ---------------- 상단 이동 탑 버튼 (Back to Top) ---------------- */
+        .btn-top {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            color: var(--text-dark);
+            border: 1px solid var(--border-gray);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 998; 
+        }
+
+        .btn-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .btn-top:hover {
+            background-color: var(--nova-blue);
+            color: white;
+            border-color: var(--nova-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 85, 255, 0.25);
+        }
+
+        .btn-top svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+		
+		/* ---------------- Facilities (시설 안내) 아코디언 레이아웃 ---------------- */
+        .accordion-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+        }
+        
+        .accordion-item {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid var(--border-gray);
+        }
+        
+        .accordion-header {
+            width: 100%;
+            padding: 20px 25px;
+            background: white;
+            border: none;
+            text-align: left;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        
+        .accordion-header:hover {
+            background: var(--bg-main);
+        }
+        
+        .accordion-header.restricted {
+            color: #E53E3E; /* 위험 구역 붉은색 텍스트 */
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .accordion-header .badge {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: #Eef2fa;
+            color: var(--nova-blue);
+            font-weight: 600;
+        }
+        
+        .accordion-header .badge.danger {
+            background: #FED7D7;
+            color: #E53E3E;
+        }
+        
+        .accordion-header .icon {
+            font-size: 24px;
+            font-weight: 300;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .accordion-item.active .accordion-header .icon {
+            transform: rotate(45deg); /* 클릭 시 +가 x로 회전 */
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+        
+        .accordion-item.active .accordion-content {
+            max-height: 2000px; /* 열렸을 때 최대 높이 부여 */
+        }
+        
+        .facility-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .facility-table th, .facility-table td {
+            padding: 18px 25px;
+            border-top: 1px solid var(--border-gray);
+            text-align: left;
+        }
+        
+        .facility-table th {
+            width: 120px;
+            font-weight: 800;
+            color: var(--nova-blue);
+            background: #FAFAFA;
+            vertical-align: top;
+        }
+        
+        .facility-table td {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .facility-table td strong {
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+
+        /* 위험 구역 테이블 색상 반전 */
+        .facility-table tr.danger-row td {
+            background-color: #FFF5F5;
+            color: #C53030;
+        }
+        .facility-table tr.danger-row th {
+            background-color: #FED7D7;
+            color: #C53030;
+        }
+
+        /* ---------------- 반응형 ---------------- */
+        @media (max-width: 900px) {
+            .desktop-nav { display: none; }
+            .hamburger { display: block; }
+            header { padding: 0 20px 0 20px; }
+            .hero-title { font-size: 32px; }
+            .content-image-placeholder, .content-image { height: 200px; font-size: 13px; margin: 30px 0; padding: 0;}
+            
+            .org-branches {
+                flex-direction: column;
+                gap: 20px;
+                border-top: none;
+                padding-top: 0;
+                margin-top: 25px; 
+            }
+            .org-root-node::after { display: none; }
+            .org-office-node { max-width: 100%; }
+            .org-teams-list { max-width: 100%; }
+            
+            .business-card {
+                width: 100%;
+                max-width: 420px;
+            }
+
+            .careers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            footer {
+                padding: 40px 20px;
+            }
+            .footer-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            .footer-links {
+                flex-wrap: wrap;
+                gap: 10px 15px;
+                font-size: 14px;
+            }
+            .footer-logo {
+                display: none; 
+            }
+            .footer-info-row {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .footer-info-row span:not(:last-child)::after {
+                display: none;
+            }
+
+            .btn-top {
+                bottom: 25px;
+                right: 25px;
+                width: 44px;
+                height: 44px;
+            }
+            .btn-top:hover {
+                transform: none; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <symbol id="nova-image-logo" viewBox="0 0 4042 2001" fill="currentColor">
+                <rect y="1" width="360" height="2000"/>
+                <rect x="48" y="181" width="360" height="2100" transform="rotate(-30 48 181)"/>
+                <rect x="1100" width="360" height="2000"/>
+                <rect x="1540" width="360" height="2000"/>
+                <rect width="360" height="2100" transform="matrix(-0.866025 -0.5 -0.5 0.866025 2949.77 180)"/>
+                <path d="M3140.74 290.195L2153.01 2001H1980.6L1980 2000.65V2000.65L3010.83 215.196L3140.74 290.195Z"/>
+                <path d="M4041.97 1849.4L2066.5 1849.4L1980.3 1998.71L1980.3 1999.4L1980.3 1999.4L4041.97 1999.4L4041.97 1849.4Z"/>
+                <path d="M3757.38 1051.83L2214 1942.9L2139 1813L3682.38 921.929L3757.38 1051.83Z"/>
+            </symbol>
+            <symbol id="nova-text-logo" viewBox="0 2170 4042 1010" fill="currentColor">
+                <path d="M292.9 2764V3155H9V2186H296.3L553 2577C591.533 2634.8 621 2683.53 641.4 2723.2H646.5V2560V2186H928.7V3155H639.7L376.2 2747L299.7 2631.4H294.6L292.9 2764ZM1569 3177.1C1400.14 3177.1 1273.2 3137.43 1188.2 3058.1C1104.34 2977.63 1062.4 2849 1062.4 2672.2C1062.4 2498.8 1108.87 2372.43 1201.8 2293.1C1294.74 2213.77 1417.7 2174.1 1570.7 2174.1C1892.57 2174.1 2053.5 2334.47 2053.5 2655.2C2053.5 2817.27 2013.84 2944.77 1934.5 3037.7C1856.3 3130.63 1734.47 3177.1 1569 3177.1ZM1562.2 2976.5C1593.94 2976.5 1620.57 2971.4 1642.1 2961.2C1663.64 2949.87 1680.64 2930.6 1693.1 2903.4C1716.9 2856.93 1728.8 2781 1728.8 2675.6C1728.8 2572.47 1716.9 2497.67 1693.1 2451.2C1669.3 2403.6 1625.67 2378.67 1562.2 2376.4C1538.4 2376.4 1513.47 2379.23 1487.4 2384.9C1462.47 2389.43 1446.6 2396.23 1439.8 2405.3C1426.2 2421.17 1415.44 2455.17 1407.5 2507.3C1400.7 2558.3 1397.3 2614.4 1397.3 2675.6C1397.3 2770.8 1406.37 2840.5 1424.5 2884.7C1436.97 2917.57 1454.54 2941.37 1477.2 2956.1C1499.87 2969.7 1528.2 2976.5 1562.2 2976.5ZM2749.79 2186H3072.79L2810.99 3155H2367.29L2103.79 2186H2428.49L2584.89 2944.2H2593.39L2749.79 2186ZM3671.17 2942.5H3388.97L3337.97 3155H3025.17L3337.97 2186H3737.47L4036.67 3155H3722.17L3671.17 2942.5ZM3528.37 2395.1L3428.07 2753.8H3630.37L3535.17 2395.1H3528.37Z"/>
+            </symbol>
+        </defs>
+    </svg>
+
+    <header>
+        <a href="#home" class="logo-container page-trigger">
+            <svg class="logo-image"><use href="#nova-image-logo"/></svg>
+            <svg class="logo-text"><use href="#nova-text-logo"/></svg>
+        </a>
+        
+        <nav class="desktop-nav">
+            <a href="#home" class="page-trigger active-link">Home</a>
+            <a href="#team" class="page-trigger">About Us</a>
+			<a href="#facilities" class="page-trigger">Facilities</a>
+            <a href="#careers" class="page-trigger">Careers</a>
+        </nav>
+
+        <div class="hamburger" id="hamburger-btn">
+            <span></span><span></span><span></span>
+        </div>
+    </header>
+
+    <nav class="mobile-nav" id="mobile-nav">
+        <a href="#home" class="page-trigger active-link">Home</a>
+        <a href="#team" class="page-trigger">About Us</a>
+		<a href="#facilities" class="page-trigger">Facilities</a>
+        <a href="#careers" class="page-trigger">Careers</a>
+    </nav>
+
+    <main>
+        
+        <div id="home" class="page active">
+            <section class="hero-section">
+                <div class="fade-item">
+                    <h1 class="hero-title">예측 불가능한 종말의 위협,<br>귀하의 생존은 안녕하십니까?</h1>
+                    <p class="hero-subtitle">범평행세계를 아우르는 압도적 위기관리 및 방호 솔루션.<br>노바가 당신의 내일을 지킵니다.</p>
+                    
+                    <img class="content-image" src="https://raw.githubusercontent.com/mn-jo/NOVA.data/refs/heads/main/bg1.webp" alt="노바 본사 전경">
+                </div>
+            </section>
+
+            <section class="hero-section">
+                <div class="fade-item">
+                    <h2 class="section-title">필연적인 재난 앞에서도 생존의 기준을 제시합니다</h2>
+                    <p class="section-desc">원인을 알 수 없는 이상 현상 및 일상을 갉아먹는 재난들. 세상은 점차 가혹한 섭리에 잠식되어 가고 있습니다. 노바는 지성체를 위협하는 모든 규격 외의 적대적 인과율로부터 고객을 보호하는 글로벌 방호 장비 기업입니다. 피할 수 없는 멸망이라면, 노바가 가장 확실한 생존의 도구를 제공하겠습니다.</p>
+                    
+                    <img class="content-image" src="https://raw.githubusercontent.com/mn-jo/NOVA.data/refs/heads/main/bg2.webp" alt="평행세계의 지옥도와 방호벽">
+                </div>
+            </section>
+
+            <section class="hero-section">
+                <div class="fade-item">
+                    <h2 class="section-title">예측할 수 없는 위협을 통제하는 압도적 기술력</h2>
+                    
+                    <img class="content-image" src="https://raw.githubusercontent.com/mn-jo/NOVA.data/refs/heads/main/bg3.webp" alt="연구팀 홀로그램 그래픽 및 장비">
+
+                    <p class="section-desc">노바의 진정한 가치는 최전선에서 증명된 독보적인 장비 설계 기술에 있습니다.</p>
+                    <ul class="feature-list">
+                        <li><strong>차세대 대(對) 재앙 솔루션 공급:</strong> 평행세계의 다양한 고객들에게 한계 상황을 극복할 수 있는 특수 전술 장비를 판매합니다. 우리의 장비가 곧 당신의 생명선입니다.</li>
+                        <li><strong>미지 기반 R&D:</strong> 수집된 특수 샘플과 미지의 ■■■■을 철저히 분석하여, 기존 문명의 상식을 뛰어넘는 생존 장비를 지속적으로 연구 개발합니다.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="hero-section">
+                <div class="fade-item" style="padding-bottom: 100px;">
+                    <h2 class="section-title">지속 가능한 평행세계를 위한 노바의 약속</h2>
+                    <p class="section-desc">비영리기관으로 출발했던 노바의 설립 이념은 여전히 현장팀의 땀방울 속에 살아있습니다.</p>
+                    
+                    <img class="content-image" src="https://raw.githubusercontent.com/mn-jo/NOVA.data/refs/heads/main/bg4.webp" alt="현장팀 요원 실루엣">
+
+                    <ul class="feature-list">
+                        <li><strong>대가 없는 최전선 인명 구조:</strong> 노바의 정예 현장팀은 종말이 도래한 위험 구역에 파견되어 조건 없이 지성체들을 구출합니다.</li>
+                        <li><strong>구원과 혁신의 선순환:</strong> 인명 구조 및 괴이 제압 과정에서 부수적으로 획득하는 부산물은 당사의 기술력을 진일보시키는 핵심 자양분이 됩니다. 노바가 뻗는 구원의 손길은, 곧 새로운 생존 장비의 탄생으로 이어집니다.</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <div id="team" class="page" style="padding: 60px 20px 100px 20px;">
+            <div class="fade-item" style="max-width: 1000px; margin: 0 auto;">
+                <h1 class="section-title">About <span>Us</span></h1>
+                
+                <div class="org-structure-container">
+                    <div class="org-tree">
+                        <div class="org-root-node">NOVA</div>
+                        <div class="org-branches">
+                            <div class="org-branch">
+                                <div class="org-office-node">자산관리실</div>
+                                <div class="org-teams-list">
+                                    <div class="org-team-node">현장팀</div>
+                                    <div class="org-team-node">연구팀</div>
+                                    <div class="org-team-node">경비팀</div>
+                                </div>
+                            </div>
+                            <div class="org-branch">
+                                <div class="org-office-node" style="border-color: #64748B;">경영지원실</div>
+                                <div class="org-teams-list">
+                                    <div class="org-team-node" style="border-left-color: #94A3B8;">행정팀</div>
+                                    <div class="org-team-node" style="border-left-color: #94A3B8;">영업팀</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dept-info-grid">
+                        <div class="dept-info-card">
+                            <div class="dept-info-title">자산관리실 <span>핵심부서</span></div>
+                            <div class="dept-info-desc">
+                                범평행세계 최전선에서 발생하는 종말 현상 제압 및 자산 관리를 전담하는 핵심 조직입니다. 
+                                대(對) 재앙 작전을 파견하는 현장팀, 미지의 인과율 에너지와 장비를 R&D하는 연구팀, 고위험 수집 샘플을 감시·통제하는 경비팀으로 구성되어 노바의 생존 기술력을 총괄합니다.
+                            </div>
+                        </div>
+                        <div class="dept-info-card support-dept">
+                            <div class="dept-info-title" style="color: #475569;">경영지원실 <span>지원부서</span></div>
+                            <div class="dept-info-desc">
+                                노바의 전반적인 경영 인프라 확립과 장비 대외 비즈니스를 지원하는 후방 조직입니다. 
+                                사내 행정, 경리, 인사를 관리하는 행정팀과 연구팀이 개발한 생존 방호 장비를 평행세계 문명권에 공급하는 영업팀이 지속 가능한 기업 운영을 뒷받침합니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="member-section-divider">자산관리실 임원</div>
+                <div class="member-container">
+                    <div class="id-card">
+                        <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-image-logo"/></svg>
+                        <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/jude.webp" alt="주드" class="photo photo-crop">
+                        <div class="name">주드</div>
+                        <div class="department">자산관리실 실장 / 이사</div>
+                        <div class="barcode-area">*NV-0001*</div>
+                    </div>
+                    <div class="business-card">
+                        <div class="biz-card-inner">
+                            <div class="biz-card-front">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/jude.webp" alt="주드" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>주드</h2>
+                                    <div class="title">자산관리실 실장 / 이사</div>
+                                    <div class="contact">
+                                        T. 02-XXXX-XXXX<br>
+                                        E. jude@nova-asset.com<br>
+                                        A. 범평행세계 틈새구역 노바 본사 13F
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                            <div class="biz-card-back inverted-back">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/jude.webp" alt="주드" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>주드</h2>
+                                    <div class="title">자산관리실 실장 / 이사</div>
+                                    <div class="contact">
+                                        <br>
+                                        C. 영체종<br>
+                                        S. Ill
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="member-section-divider">자산관리실 - 현장팀</div>
+                <div class="member-container">
+                    <div class="id-card">
+                        <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-image-logo"/></svg>
+                        <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/yaar.webp" alt="야아르" class="photo photo-crop">
+                        <div class="name">야아르</div>
+                        <div class="department">현장1팀 팀장 / 부장</div>
+                        <div class="barcode-area">*NV-1001*</div>
+                    </div>
+                    <div class="business-card">
+                        <div class="biz-card-inner">
+                            <div class="biz-card-front">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/yaar.webp" alt="야아르" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>야아르</h2>
+                                    <div class="title">현장1팀 팀장 / 부장</div>
+                                    <div class="contact">
+                                        T. 02-XXXX-XXXX<br>
+                                        E. yaar@nova-asset.com<br>
+                                        A. 범평행세계 틈새구역 노바 본사 9F
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                            <div class="biz-card-back inverted-back">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/yaar.webp" alt="야아르" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>야아르</h2>
+                                    <div class="title">현장1팀 팀장 / 부장</div>
+                                    <div class="contact">
+                                        <br>
+                                        C. 영체종<br>
+                                        S. Nyctohylophobia
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="member-container">
+                    <div class="id-card">
+                        <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-image-logo"/></svg>
+                        <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/beoksoo_f.webp" alt="벅수" class="photo photo-crop">
+                        <div class="name">벅수</div>
+                        <div class="department">현장1팀 / 과장</div>
+                        <div class="barcode-area">*NV-1002*</div>
+                    </div>
+                    <div class="business-card">
+                        <div class="biz-card-inner">
+                            <div class="biz-card-front">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/beoksoo_f.webp" alt="벅수" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>벅수</h2>
+                                    <div class="title">현장1팀 / 과장</div>
+                                    <div class="contact">
+                                        T. 02-XXXX-XXXX<br>
+                                        E. beoksoo@nova-asset.com<br>
+                                        A. 범평행세계 틈새구역 노바 본사 9F
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                            <div class="biz-card-back inverted-back">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/beoksoo_b.webp" alt="벅수" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>벅수</h2>
+                                    <div class="title">현장1팀 / 과장</div>
+                                    <div class="contact">
+                                        <br>
+                                        C. 영체종<br>
+                                        S. 法首
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="member-container">
+                    <div class="id-card">
+                        <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-image-logo"/></svg>
+                        <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/balthazar.webp" alt="발타자르" class="photo photo-crop">
+                        <div class="name">발타자르</div>
+                        <div class="department">현장2팀 팀장 / 차장</div>
+                        <div class="barcode-area">*NV-2001*</div>
+                    </div>
+                    <div class="business-card">
+                        <div class="biz-card-inner">
+                            <div class="biz-card-front">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/balthazar.webp" alt="발타자르" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>발타자르</h2>
+                                    <div class="title">현장2팀 팀장 / 차장</div>
+                                    <div class="contact">
+                                        T. 02-XXXX-XXXX<br>
+                                        E. balthazar@nova-asset.com<br>
+                                        A. 범평행세계 틈새구역 노바 본사 9F
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                            <div class="biz-card-back">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/balthazar.webp" alt="발타자르" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>발타자르</h2>
+                                    <div class="title">현장2팀 팀장 / 차장</div>
+                                    <div class="contact">
+                                        <br>
+                                        C. 육체종<br>
+                                        S. Dark Elf
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="member-container">
+                    <div class="id-card">
+                        <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-image-logo"/></svg>
+                        <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/doma.webp" alt="도마" class="photo photo-crop">
+                        <div class="name">도마</div>
+                        <div class="department">현장2팀 / 사원</div>
+                        <div class="barcode-area">*NV-2002*</div>
+                    </div>
+                    <div class="business-card">
+                        <div class="biz-card-inner">
+                            <div class="biz-card-front">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/doma.webp" alt="도마" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>도마</h2>
+                                    <div class="title">현장2팀 / 사원</div>
+                                    <div class="contact">
+                                        T. 02-XXXX-XXXX<br>
+                                        E. doma@nova-asset.com<br>
+                                        A. 범평행세계 틈새구역 노바 본사 9F
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                            <div class="biz-card-back">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/doma.webp" alt="도마" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>도마</h2>
+                                    <div class="title">현장2팀 / 사원</div>
+                                    <div class="contact">
+                                        <br>
+                                        C. 육체종<br>
+                                        S. Wyvern
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="member-section-divider">자산관리실 - 연구팀</div>
+                <div class="member-container">
+                    <div class="id-card">
+                        <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-image-logo"/></svg>
+                        <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/bezaleel.webp" alt="브살렐" class="photo photo-crop">
+                        <div class="name">브살렐</div>
+                        <div class="department">연구1팀 / 대리</div>
+                        <div class="barcode-area">*NV-3001*</div>
+                    </div>
+                    <div class="business-card">
+                        <div class="biz-card-inner">
+                            <div class="biz-card-front">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/bezaleel.webp" alt="브살렐" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>브살렐</h2>
+                                    <div class="title">연구1팀 / 대리</div>
+                                    <div class="contact">
+                                        T. 02-XXXX-XXXX<br>
+                                        E. bezaleel@nova-asset.com<br>
+                                        A. 범평행세계 틈새구역 노바 본사 ■F
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                            <div class="biz-card-back">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/bezaleel.webp" alt="브살렐" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>브살렐</h2>
+                                    <div class="title">연구1팀 / 대리</div>
+                                    <div class="contact">
+                                        <br>
+                                        C. 육체종<br>
+                                        S. Half-Elf
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="member-section-divider">자산관리실 - 경비팀</div>
+                <div class="member-container">
+                    <div class="id-card">
+                        <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-image-logo"/></svg>
+                        <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/pablos_f.webp" alt="파블로스" class="photo photo-crop">
+                        <div class="name">파블로스</div>
+                        <div class="department">경비1팀 / 차장</div>
+                        <div class="barcode-area">*NV-4001*</div>
+                    </div>
+                    <div class="business-card">
+                        <div class="biz-card-inner">
+                            <div class="biz-card-front">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/pablos_f.webp" alt="파블로스" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>파블로스</h2>
+                                    <div class="title">경비1팀 / 차장</div>
+                                    <div class="contact">
+                                        T. 02-XXXX-XXXX<br>
+                                        E. pablos@nova-asset.com<br>
+                                        A. 범평행세계 틈새구역 노바 본사 8F
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                            <div class="biz-card-back inverted-back">
+                                <svg class="logo-area" color="var(--nova-blue)"><use href="#nova-text-logo"/></svg>
+                                <img src="https://raw.githubusercontent.com/mn-jo/NOVA.data/main/pablos_b.webp" alt="파블로스" class="photo-biz photo-crop">
+                                <div class="info-section">
+                                    <h2>파블로스</h2>
+                                    <div class="title">현장■팀 / ■■</div>
+                                    <div class="contact">
+                                        <br>
+                                        C. 육체종<br>
+                                        S. Human
+                                    </div>
+                                </div>
+                                <svg class="bg-watermark"><use href="#nova-image-logo"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		<div id="facilities" class="page" style="padding: 60px 20px 100px 20px;">
+            <div class="fade-item" style="max-width: 900px; margin: 0 auto; text-align: center;">
+                <h1 class="section-title">Facilities <span>Map</span></h1>
+                <p class="section-desc" style="text-align: center; margin-bottom: 50px;">
+                    노바 본사 층별 안내입니다. 출입 통제 구역 접근 시 보안 인가의 확인이 필요합니다.
+                </p>
+
+                <div class="accordion-container">
+                    
+                    <div class="accordion-item active">
+                        <button class="accordion-header">
+                            <div class="header-left">
+                                지상 구역 (1F ~ RF) <span class="badge">안전 구역</span>
+                            </div>
+                            <span class="icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <table class="facility-table">
+                                <tr>
+                                    <th>RF</th>
+                                    <td>
+                                        <strong>옥상 정원 및 게이트</strong>
+                                        현장팀 및 영업팀의 원활한 파견을 위한 평행세계 게이트 존
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>13~14F</th>
+                                    <td>
+                                        <strong>임원층</strong>
+                                        14F: 대회의실 및 이사회실<br>
+                                        13F: 임원 개인 집무실
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>12F</th>
+                                    <td>
+                                        <strong>대회의 공간</strong>
+                                        자산관리실 및 임원 겸용 회의실 밀집 구역
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>9~11F</th>
+                                    <td>
+                                        <strong>현장팀</strong>
+                                        11F: 의무실, 체력단련실<br>
+                                        10F: 지원동 (무기고, 전용 장비 라커룸, 파견 브리핑실)<br>
+                                        9F: 현장팀 사무실 및 브리핑룸
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>8F</th>
+                                    <td>
+                                        <strong>경비팀</strong>
+                                        사무실 및 통합관제실 (지하 격리공간 CCTV 및 결계 모니터링 수행)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>5~7F</th>
+                                    <td>
+                                        <strong>연구팀</strong>
+                                        7F: 데이터 아카이브<br>
+                                        6F: 대재앙 방호 장비 개량 및 제작 공방<br>
+                                        5F: 셰키나 및 특수 샘플 분석 랩실
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>2~4F</th>
+                                    <td>
+                                        <strong>경영지원실</strong>
+                                        4F: 공용 회의실 및 서류고<br>
+                                        3F: 영업팀 사무실 및 거래처 미팅룸<br>
+                                        2F: 행정팀 사무실
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>1F</th>
+                                    <td>
+                                        <strong>로비 & 영업 전시실</strong>
+                                        메인 안내 데스크 및 연구팀 개발 전술 장비 쇼케이스
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header restricted">
+                            <div class="header-left">
+                                지하 구역 (B1 ~ B44) <span class="badge danger">일반 직원 출입 통제</span>
+                            </div>
+                            <span class="icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <table class="facility-table">
+                                <tr>
+                                    <th>B1~B4</th>
+                                    <td>
+                                        <strong>물류 및 반입동</strong>
+                                        현장팀 수집 샘플 1차 반입 구역, 대형 장비 하역장, 지하 주차장
+                                    </td>
+                                </tr>
+                                <tr class="danger-row">
+                                    <th>B5~B44</th>
+                                    <td>
+                                        <strong>최고 보안 격리 공간</strong>
+                                        원인 불명의 위험 샘플 및 ■■ 격리 구역.<br>
+                                        경비팀의 24시간 철통 감시가 이루어지며, 허가받지 않은 모든 직원의 출입을 엄격히 금지합니다.
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="careers" class="page" style="padding: 60px 20px 100px 20px;">
+            <div class="fade-item" style="max-width: 1100px; margin: 0 auto; text-align: center;">
+                <h1 class="section-title">Join <span>NOVA</span></h1>
+                <p class="section-desc" style="text-align: center; margin-bottom: 50px;">
+                    필연적인 재난 앞에서도 굴하지 않고, 지속 가능한 평행세계의 내일을 함께 지켜나갈 인재를 모십니다.
+                </p>
+
+                <div class="careers-grid">
+                    
+                    <div class="job-card">
+                        <div class="job-dept">경영지원실</div>
+                        <h3 class="job-title">행정팀 사무원 모집</h3>
+                        
+                        <div class="job-section-title">주요 업무</div>
+                        <ul class="job-list">
+                            <li>사내 행정, 인사, 총무 및 서류 관리</li>
+                            <li>부서 간 업무 조율 및 스케줄 관리</li>
+                        </ul>
+                        
+                        <div class="job-section-title">자격 요건</div>
+                        <ul class="job-list">
+                            <li>OA(Excel, Word 등) 활용 능통자</li>
+                            <li>꼼꼼하고 성실하며 원활한 소통 능력을 갖춘 자</li>
+                        </ul>
+                        
+                        <div class="job-section-title">복리후생</div>
+                        <ul class="job-list">
+                            <li>주 5일제, 4대 보험 전면 적용</li>
+                            <li>쾌적하고 안전한 사내 식당 및 전용 카페 라운지 이용</li>
+                            <li>자유로운 연차 사용 및 유연근무제</li>
+                        </ul>
+                    </div>
+
+                    <div class="job-card">
+                        <div class="job-dept">자산관리실</div>
+                        <h3 class="job-title">연구팀 R&D 연구원 모집</h3>
+                        
+                        <div class="job-section-title">주요 업무</div>
+                        <ul class="job-list">
+                            <li>■■■ 추출 및 가공 프로세스 연구</li>
+                            <li>고위험 샘플 해부 및 대(對) 재앙 전술 장비 개발</li>
+                        </ul>
+                        
+                        <div class="job-section-title">자격 요건</div>
+                        <ul class="job-list">
+                            <li>생명공학, 신소재공학 등 관련 전공자 우대</li>
+                            <li>기존 상식을 벗어난 미지에 대한 탐구심이 강한 자</li>
+                        </ul>
+                        
+                        <div class="job-section-title">복리후생</div>
+                        <ul class="job-list">
+                            <li>업계 최고 수준의 최첨단 방호 랩실 제공</li>
+                            <li>연구 성과에 따른 파격적인 크레딧 보너스 지급</li>
+                            <li><strong>정기적인 전문 정신 건강 상담 전면 지원</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="job-card field-team">
+                        <div class="job-dept">자산관리실</div>
+                        <h3 class="job-title">현장팀 파견 요원 모집</h3>
+                        
+                        <div class="job-section-title">주요 업무</div>
+                        <ul class="job-list">
+                            <li>종말이 도래한 위험 구역 최전선 파견 및 지성체 구출</li>
+                            <li>괴이 제압 및 특수 샘플 회수</li>
+                        </ul>
+                        
+                        <div class="job-section-title">자격 요건</div>
+                        <ul class="job-list">
+                            <li>신체적 혹은 영적 전투 능력이 월등히 우수한 자 (종족 무관)</li>
+                            <li><strong>죽음에 대한 절대적인 공포가 없는 자</strong></li>
+                            <li>극한의 재난 상황에서도 이성과 냉정함을 잃지 않는 자</li>
+                        </ul>
+                        
+                        <div class="job-section-title">복리후생</div>
+                        <ul class="job-list">
+                            <li><strong>사망보험금 업계 최고 수준 우대 보장</strong></li>
+                            <li>급여 크레딧 지급 (본인 희망 시 <strong>셰키나 직접 지급 가능</strong>)</li>
+                            <li>임무 수행용 최신형 특수 전술 장비 및 방호복 무상 제공</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="footer-links">
+                        <a href="#none">이용약관</a>
+                        <a href="#none" class="privacy-policy">개인정보처리방침</a>
+                        <a href="#none">위기대응강령</a>
+						<a href="#none">고객지원</a>
+                    </div>
+                    <div class="footer-logo">
+                        <svg class="logo-image"><use href="#nova-image-logo"/></svg>
+                        <svg class="logo-text"><use href="#nova-text-logo"/></svg>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <div class="footer-info-row">
+                        <span><strong>유한회사 노바</strong></span>
+                        <span>대표이사: ■■■</span>
+                        <span>사업자등록번호: 000-00-00000 (범평행세계 교역 제■호)</span>
+                    </div>
+                    <div class="footer-info-row">
+                        <span>본사 주소: 범평행세계 틈새구역 노바 타워 13F 자산관리실</span>
+                        <span>대표 이메일: ■■@nova-asset.com</span>
+                    </div>
+                    <p class="copyright">&copy; ■02■ NOVA Co., Ltd. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <button class="btn-top" id="btn-top" aria-label="맨 위로 이동">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
+    <script>
+        /* ---------------- 모바일 메뉴 토글 제어 ---------------- */
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileNav = document.getElementById('mobile-nav');
+        
+        hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+        });
+		
+		/* ---------------- 시설 안내 아코디언 클릭 기믹 ---------------- */
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                
+                // 클릭한 탭이 열려있지 않다면, 열기
+                if (!item.classList.contains('active')) {
+                    item.classList.add('active');
+                } else {
+                    // 이미 열려있다면 닫기
+                    item.classList.remove('active');
+                }
+            });
+        });
+
+        /* ---------------- 명함 클릭 시 3D 플립 (뒤집기) 기믹 수정 ---------------- */
+        const businessCards = document.querySelectorAll('.business-card');
+        businessCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // 1. 이미 카드가 뒤집혀 있는 상태라면 터치(클릭) 이벤트를 무시합니다.
+                if (card.classList.contains('is-flipped')) return;
+
+                // 2. 앞면일 경우 카드를 뒤집습니다.
+                card.classList.add('is-flipped');
+
+                // 3. 2초(2000ms) 뒤에 자동으로 다시 앞면으로 원복시킵니다.
+                setTimeout(() => {
+                    card.classList.remove('is-flipped');
+                }, 2000);
+            });
+        });
+
+        /* ---------------- IntersectionObserver (Home 전용 스크롤 페이드인) ---------------- */
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { 
+            threshold: 0.10,
+            rootMargin: "0px 0px -30px 0px"
+        });
+
+        /* ---------------- 단일 페이지 어플리케이션(SPA) 탭 라우팅 구현 ---------------- */
+        const pages = document.querySelectorAll('.page');
+        const allNavLinks = document.querySelectorAll('.desktop-nav a, .mobile-nav a, .logo-container, .footer-links .page-trigger');
+
+        function switchPage(targetId, isInitial = false) {
+            // 1. 모든 페이지 숨김 처리
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // 2. 타겟 페이지 활성화
+            const targetPage = document.querySelector(targetId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                
+                const pageFadeItems = targetPage.querySelectorAll('.fade-item');
+                
+                if (targetId === '#home') {
+                    pageFadeItems.forEach(item => {
+                        if (!isInitial) {
+                            item.classList.remove('visible'); 
+                        }
+                        observer.observe(item);
+                    });
+                } else {
+                    pageFadeItems.forEach(item => {
+                        observer.unobserve(item);
+                        item.classList.remove('visible');
+                    });
+                    
+                    setTimeout(() => {
+                        pageFadeItems.forEach(item => {
+                            item.classList.add('visible');
+                        });
+                    }, 20);
+                }
+            }
+
+            // 3. 네비게이션 메뉴 버튼 활성화 스타일 업데이트
+            document.querySelectorAll('.desktop-nav a, .mobile-nav a').forEach(link => {
+                if (link.getAttribute('href') === targetId) {
+                    link.classList.add('active-link');
+                } else {
+                    link.classList.remove('active-link');
+                }
+            });
+
+            // 4. 페이지 이동 시 화면 최상단 정렬
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        // 각 네비게이션 해시 링크 클릭 이벤트 처리
+        allNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    switchPage(href);
+
+                    // 모바일 사이드바 활성화 상태라면 닫기
+                    hamburgerBtn.classList.remove('active');
+                    mobileNav.classList.remove('active');
+                }
+            });
+        });
+
+        /* ---------------- 상단 이동(Top) 버튼 스크롤 연동 제어 ---------------- */
+        const btnTop = document.getElementById('btn-top');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                btnTop.classList.add('show');
+            } else {
+                btnTop.classList.remove('show');
+            }
+        });
+
+        btnTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        /* ---------------- 새로고침 및 첫 로딩 시 강제 Home 지정 + 스크롤 복원 차단 ---------------- */
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        switchPage('#home', true);
+        
+        if (window.location.hash !== '#home') {
+            history.replaceState(null, null, '#home');
+        }
+
+        window.addEventListener('load', () => {
+			window.scrollTo({ top: 0, behavior: 'auto' });
+		});
+    </script>
+</body>
+</html>
